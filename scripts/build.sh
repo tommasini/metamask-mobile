@@ -160,7 +160,7 @@ buildAndroidRunE2E(){
 	then
 		source $ANDROID_ENV_FILE
 	fi
-	cd android && ./gradlew assembleAndroidTest -PminSdkVersion=26 -DtestBuildType=debug && cd ..
+	cd android && ./gradlew app:assembleAndroidTest -P minSdkVersion=26 -D testBuildType=debug && cd ..
 	react-native run-android
 }
 
@@ -254,7 +254,7 @@ buildAndroidRelease(){
 
 buildAndroidReleaseE2E(){
 	prebuild_android
-	cd android && ./gradlew assembleRelease assembleAndroidTest -PminSdkVersion=26 -DtestBuildType=release
+	cd android && ./gradlew assembleRelease assembleAndroidTest -P minSdkVersion=26 -D testBuildType=release
 }
 
 buildAndroid() {
