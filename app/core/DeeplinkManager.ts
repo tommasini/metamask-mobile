@@ -125,6 +125,7 @@ class DeeplinkManager {
 	parse(url: string, { browserCallBack, origin, onHandled }: parseArgs) {
 		const urlObj = new URL(url);
 		let params;
+		let wcCleanUrl: string;
 
 		if (urlObj.query) {
 			try {
@@ -169,9 +170,14 @@ class DeeplinkManager {
 			// address, transactions, etc
 			case PROTOCOLS.WC:
 				handled(); //TODO: check if we have to handle it here or handle after the next isValidUri check
-				if (!WalletConnect.isValidUri(url)) return;
 
-				WalletConnect.newSession(url, params?.redirect, params?.autosign);
+				wcCleanUrl = url.replace('wc://wc?uri=', '');
+				if (!WalletConnect.isValidUri(wcCleanUrl)) {
+					Alert.alert(strings('deeplink.invalid'));
+					return;
+				}
+
+				WalletConnect.newSession(wcCleanUrl, params?.redirect, params?.autosign);
 				break;
 			case PROTOCOLS.ETHEREUM:
 				handled();
@@ -192,7 +198,7 @@ class DeeplinkManager {
 			case PROTOCOLS.METAMASK:
 				handled(); //TODO: check if we need to wait to handle it after all checks are made
 
-				if (urlObj.origin.indexOf('metamask://wc') === 0) {
+				if (url.startsWith('metamask://wc')) {
 					const { href } = new URL(urlObj.query.replace('?uri=', ''));
 
 					if (!WalletConnect.isValidUri(href)) return;
